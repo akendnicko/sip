@@ -12,7 +12,16 @@ use Carbon\Carbon;
 class PengaduanController extends Controller
 {
     public function index() {
-        $pengaduan = Pengaduan::with('user')->where('status', 'process')->latest()->paginate(10);
+        
+        if (Auth::user()->role == 'admin') {
+            $pengaduan = Pengaduan::with('user')
+                ->where('status', 'process')
+                ->latest()->paginate(10);
+        } else {
+            $pengaduan = Pengaduan::where('user_id', Auth::id())
+                ->where('status', 'process')
+                ->latest()->paginate(10);
+        }
         return view('pengaduan.index', compact('pengaduan'));
     }
 
